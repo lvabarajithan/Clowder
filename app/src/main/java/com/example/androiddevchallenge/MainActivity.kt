@@ -20,17 +20,24 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.ui.screens.DetailScreen
+import com.example.androiddevchallenge.ui.screens.HomeScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val appTitle = getString(R.string.app_name)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(appTitle)
             }
         }
     }
@@ -38,9 +45,21 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
+fun MyApp(title: String) {
+    val navController = rememberNavController()
+
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        NavHost(navController = navController, startDestination = "home") {
+            composable("home") { HomeScreen(title = title, navController = navController) }
+            composable("details/{catId}", arguments = listOf(
+                navArgument("catId") { type = NavType.IntType }
+            )) {
+                DetailScreen(
+                    catId = it.arguments!!.getInt("catId"),
+                    navController = navController
+                )
+            }
+        }
     }
 }
 
@@ -48,7 +67,7 @@ fun MyApp() {
 @Composable
 fun LightPreview() {
     MyTheme {
-        MyApp()
+        MyApp("Clowder")
     }
 }
 
@@ -56,6 +75,6 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MyApp()
+        MyApp("Clowder")
     }
 }
