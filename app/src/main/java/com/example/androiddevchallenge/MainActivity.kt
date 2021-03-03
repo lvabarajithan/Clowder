@@ -51,9 +51,12 @@ fun MyApp(title: String) {
     Surface(color = MaterialTheme.colors.background) {
         NavHost(navController = navController, startDestination = "home") {
             composable("home") { HomeScreen(title = title, navController = navController) }
-            composable("details/{catId}", arguments = listOf(
-                navArgument("catId") { type = NavType.IntType }
-            )) {
+            composable(
+                "details/{catId}",
+                arguments = listOf(
+                    navArgument("catId") { type = NavType.IntType }
+                )
+            ) {
                 DetailScreen(
                     catId = it.arguments!!.getInt("catId"),
                     navController = navController
