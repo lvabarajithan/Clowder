@@ -34,6 +34,13 @@ fun DetailScreen(catId: Int, navController: NavHostController) {
         }
         AppCatBanner(cat = cat, size = 250.dp, modifier = Modifier.padding(top = 16.dp))
         CatDetails(cat)
+        OutlinedButton(
+            onClick = {}, modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+        ) {
+            Text(text = "Adopt Me")
+        }
     }
 }
 

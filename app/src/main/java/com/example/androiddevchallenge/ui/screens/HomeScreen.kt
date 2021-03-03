@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,8 +39,8 @@ import com.example.androiddevchallenge.ui.components.AppTextField
 
 @Composable
 fun HomeScreen(title: String, navController: NavHostController) {
-    val searchText = remember { mutableStateOf("") }
-    val filteredTags = remember { mutableStateOf(Tag.values().map { false }) }
+    val searchText = rememberSaveable { mutableStateOf("") }
+    val filteredTags = rememberSaveable { mutableStateOf(Tag.values().map { false }) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -56,11 +57,24 @@ fun HomeScreen(title: String, navController: NavHostController) {
             modified[index] = !modified[index]
             filteredTags.value = modified
         }
-        if (searchText.value.isEmpty()) {
-            CatList(cats, navController)
-        } else {
-            CatList(cats.filter { it.name.contains(searchText.value, true) }, navController)
+
+        val allTags = Tag.values()
+        var filteredCats: List<Cat> = cats
+        if (filteredTags.value.contains(true)) {
+            val filterableTags = mutableListOf<Tag>()
+            filteredTags.value.forEachIndexed { index, isChecked ->
+                if (isChecked) {
+                    filterableTags.add(allTags[index])
+                }
+            }
+            filteredCats = filteredCats.filter {
+                it.tag.intersect(filterableTags.asIterable()).isNotEmpty()
+            }
         }
+        if (searchText.value.isNotEmpty()) {
+            filteredCats = filteredCats.filter { it.name.contains(searchText.value, true) }
+        }
+        CatList(filteredCats, navController)
     }
 }
 
